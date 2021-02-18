@@ -7,7 +7,7 @@ services:
 
   #Api Service
   api:
-    #image: localhost:5000/goqibla_api:latest
+    image: singledeveloper/qiblabackendpanel_api:latest
     # Configuration for building the docker image for the service
     build:
       context: . # Use an image built from the specified dockerfile in the current directory.
