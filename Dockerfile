@@ -68,8 +68,8 @@ RUN ls -al
 # Build the Go app
 RUN go build -o main .
 #RUN go run main.go
-# Expose port 3000 to the outside world
-EXPOSE 3000
+# Expose port 000 to the outside world
+EXPOSE 2000
 RUN hostname
 RUN ifconfig
 
@@ -80,3 +80,4 @@ CMD ["./main"]
 #RUN go run main.go
 
 RUN ls -al
+

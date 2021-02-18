@@ -14,7 +14,7 @@ services:
       dockerfile: Dockerfile
     container_name: api
     ports:
-      - "3000:3000" # Forward the exposed port 3000 on the container to port 3000 on the host machine
+      - "2000:2000" # Forward the exposed port 3000 on the container to port 2000 on the host machine
     restart: unless-stopped
     depends_on: 
       #- rabbitmq
