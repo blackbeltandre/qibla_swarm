@@ -1,0 +1,84 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+
+version: '3'
+
+# Define services
+services:
+
+  #Api Service
+  api:
+    image: localhost:5000/goqibla_api:latest
+    # Configuration for building the docker image for the service
+    build:
+      context: . # Use an image built from the specified dockerfile in the current directory.
+      dockerfile: Dockerfile
+    container_name: api
+    ports:
+      - "3000:3000" # Forward the exposed port 3000 on the container to port 3000 on the host machine
+    restart: unless-stopped
+    depends_on: 
+      #- rabbitmq
+      - redis # This service depends on redis. Start that first.
+    environment: # Pass environment variables to the service
+      REDIS_HOST: "${REDIS_HOST}"    
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - host
+
+ #Redis Service
+  redis:
+    image: 'redis:latest'
+    restart: always
+    #hostname: nusatek
+    container_name: redis
+    ports:
+      - '6379:6379'
+    command: redis-server
+    volumes:
+      - redis_data_volume:/data
+    networks:
+      - host
+
+ #RabitMq Service
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: always
+    container_name: rabbitmq
+    #hostname: nusatek
+    env_file:
+      - .env
+    environment:
+      #RABBITMQ_DEFAULT_USER: "guest"
+      #RABBITMQ_DEFAULT_PASS: "guest"
+      - AMQP_URL:"${AMQP_URL}"
+    ports:
+      - "5672:5672"
+      - "15672:15672" 
+    command: rabbitmq-server
+    networks:
+      - host
+
+  #PostgreSql Service
+  postgres:
+    image: postgres:alpine
+    container_name: postgres
+    env_file:
+      - .env
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_USER: "${DB_USER}"
+    volumes:
+      - /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    restart: on-failure
+
+#NAT Private
+networks:
+  host:    
+
+#Volume for service
+volumes:
+  rabbitmq_data_volume:
+  redis_data_volume:
